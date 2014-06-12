@@ -281,7 +281,7 @@ The following schemata are built into the package (sorted alphabetically):
       -- No suitable alternative: No schema matches '<val>'
       print(schema.CheckSchema(negExample, exampleSchema))
 
- * **Optional(s)**
+* **Optional(s)**
    
    Alias for  ```OneOf(s, Nil)```. Represents optional value.
 
