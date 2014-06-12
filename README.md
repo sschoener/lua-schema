@@ -87,7 +87,8 @@ context sensitive schema ('Case', see below).
 All non-function values are schemata.
 The following schemata are built into the package (sorted alphabetically):
 
-* AllOf(...)
+* **AllOf(...)**
+
   Takes a list of schemata and accepts any object that is accepted by all of
   the schemata. Example:
 
@@ -101,14 +102,16 @@ The following schemata are built into the package (sorted alphabetically):
       -- Invalid value: '<val>' must be an integral number
       print(schema.CheckSchema(negExample2, exampleSchema))
 
-* Any
+* **Any**
+
   Matches anything. Example:
       
       local exampleData = { "test" }
       -- err is always nil
       local err = schema.CheckSchema(exampleData, schema.Any)
 
-* Boolean
+* **Boolean**
+
   Matches booleans. Example:
 
       local posExample = true
@@ -116,7 +119,8 @@ The following schemata are built into the package (sorted alphabetically):
       -- Type mismatch: '<val>' should be boolean, is table
       print(chema.CheckSchema(negExample, schema.Boolean))
 
-* Case(path, ...)
+* **Case(path, ...)**
+
   Takes a *relative path* and a list of entries of the form ```{c, s}```,
   whereby ```c``` (condition) and ```s``` (consequence) are both schemata.
   It then navigates to the value denoted by the relative path and checks it
@@ -143,8 +147,8 @@ The following schemata are built into the package (sorted alphabetically):
         kind = "user",
         rights = "777"
       }
-     -- Case failed: Condition 1 of 'rights' holds but the consequence does not
-     --   Invalid value: rights should be 000
+      -- Case failed: Condition 1 of 'rights' holds but the consequence does not
+      --   Invalid value: rights should be 000
       print(schema.CheckSchema(negExample, exampleSchema))
       local negExample2 = {
         kind  = "test", -- invalid kind!
@@ -155,7 +159,8 @@ The following schemata are built into the package (sorted alphabetically):
       -- No suitable alternative: No schema matches 'kind'
       print(schema.CheckSchema(negExample2, exampleSchema))
 
-* Collection(valSchema)
+* **Collection(valSchema)**
+
   Alias for ```Map(Any,valSchema)```: Takes a schema and matches all tables
   which have values matching the given schema. The keys of the table are
   ignored. Also accepts the empty table. Example:
@@ -174,7 +179,8 @@ The following schemata are built into the package (sorted alphabetically):
       print(schema.CheckSchema(negExample2, exampleSchema))
 
 
-* Function
+* **Function**
+
   Matches functions. Example:
 
       local posExample = table.concat
@@ -183,7 +189,8 @@ The following schemata are built into the package (sorted alphabetically):
       -- Type mismatch: '<val>' should be function, is string
       print(schema.CheckSchema(negExample, schema.Function))
 
-* Integer
+* **Integer**
+
   Matches integers. Example:
 
       local posExample = 42
@@ -196,7 +203,8 @@ The following schemata are built into the package (sorted alphabetically):
       -- Invalid value: '<val>' must be an integral number
       print(schema.CheckSchema(negExample2, schema.Integer))
 
-* Map(keySchema, valSchema)
+* **Map(keySchema, valSchema)**
+
   Matches all tables whose keys match the ```keySchema``` and whose values
   match the ```valSchema```. Example:
 
@@ -208,7 +216,8 @@ The following schemata are built into the package (sorted alphabetically):
       --   Type mismatch: 'test' should be number, is string
       print(schema.CheckSchema(negExample, exampleSchema))
 
-* Nil
+* **Nil**
+
   Matches ```nil```. Note that you could just as well use the value ```nil```
   as a schema in *most* situations. If an argument list is used, you should
   prefer ```Nil``` to ```nil``` due to the way that Lua deals with ```nil```
@@ -220,7 +229,8 @@ The following schemata are built into the package (sorted alphabetically):
       -- Type mismatch: '<val>' should be nil, is number
       print(schema.CheckSchema(negExample, schema.Nil))
 
-* NonNegativeNumber
+* **NonNegativeNumber**
+
   Matches all non-negative numbers (i.e, number >= 0). Example:
 
       local posExample = 42.3
@@ -229,14 +239,16 @@ The following schemata are built into the package (sorted alphabetically):
       -- Invalid value: '<val>' must be >= 0
       print(schema.CheckSchema(negExample, schema.NonNegativeNumber))
 
-* Nothing
+* **Nothing**
+
   Does not match anything. Always returns an error.
 
       local negExample = { "test" }
       -- Failure: '<val>' will always fail.
       print(schema.CheckSchema(negExample, schema.Nothing))
 
-* Number
+* **Number**
+  
   Matches all numbers.
 
       local posExample = 42
@@ -245,7 +257,8 @@ The following schemata are built into the package (sorted alphabetically):
       -- Type mismatch: '<val>' should be number, is string
       print(schema.CheckSchema(negExample, schema.Integer))
 
-* NumberFrom(lower, upper)
+* **NumberFrom(lower, upper)**
+  
   Matches all numbers in the interval [lower, upper].
 
       local exampleSchema = schema.NumberFrom(0, 42)
@@ -255,7 +268,8 @@ The following schemata are built into the package (sorted alphabetically):
       -- Invalid value: '<val>' must be between 0 and 42
       print(schema.CheckSchema(negExample, exampleSchema))
 
-* OneOf(...)
+* **OneOf(...)**
+  
   Takes a list of schemata and accepts any object that is accepted by at least
   one of the schemata.
 
@@ -267,7 +281,8 @@ The following schemata are built into the package (sorted alphabetically):
       -- No suitable alternative: No schema matches '<val>'
       print(schema.CheckSchema(negExample, exampleSchema))
 
- * Optional(s)
+ * **Optional(s)**
+   
    Alias for  ```OneOf(s, Nil)```. Represents optional value.
 
       local exampleSchema = schema.Optional(schema.Integer)
@@ -278,7 +293,8 @@ The following schemata are built into the package (sorted alphabetically):
       -- No suitable alternative: No schema matches '<val>'
       print(schema.CheckSchema(negExample, exampleSchema))
 
-* Record(tableSchema, additionalValues = false)
+* **Record(tableSchema, additionalValues = false)**
+  
   Takes a table schema. The table schema consists of keys (strings only) and 
   schemata for the corresponding values. If the object contains additional
   values to those mentioned in the schema, the schema fails. This behavior can
@@ -310,7 +326,8 @@ The following schemata are built into the package (sorted alphabetically):
       -- Superfluous value: '1' does not appear in the record schema
       print(schema.CheckSchema(negExample, exampleSchema))
 
-* String
+* **String**
+
   Matches strings. Example:
 
       local posExample = "test"
@@ -319,7 +336,8 @@ The following schemata are built into the package (sorted alphabetically):
       -- Type mismatch: '<val>' should be string, is number
       print(schema.CheckSchema(negExample, schema.String))
 
-* Table
+* **Table**
+
   Matches tables (as in: everything that is of type table). Example:
 
       local posExample = {}
@@ -329,7 +347,7 @@ The following schemata are built into the package (sorted alphabetically):
       -- Type mismatch: '<val>' should be table, is string
       print(schema.CheckSchema(negExample, schema.Table))
 
-* Tuple(...)
+* **Tuple(...)**
 
   Takes schemata and matches against a tuple of those schemata in the order
   passed to the constructor. Example:
@@ -346,7 +364,8 @@ The following schemata are built into the package (sorted alphabetically):
       -- Invalid length: '<val> should have exactly 2 elements
       print(schema.CheckSchema(negExample, exampleSchema))
 
-* UserData
+* **UserData**
+  
   Matches user data.
 
 
