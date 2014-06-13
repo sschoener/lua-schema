@@ -283,7 +283,8 @@ The following schemata are built into the package (sorted alphabetically):
 
 * **Optional(s)**
    
-   Alias for  ```OneOf(s, Nil)```. Represents optional value.
+  Alias for ```OneOf(s, Nil)```. Represents optional values.
+  Example:
 
       local exampleSchema = schema.Optional(schema.Integer)
       local posExample = 1
