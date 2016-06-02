@@ -263,6 +263,29 @@ function schema.String  (obj, path) return TypeSchema(obj, path, "string")   end
 function schema.Table   (obj, path) return TypeSchema(obj, path, "table")    end
 function schema.UserData(obj, path) return TypeSchema(obj, path, "userdata") end
 
+-- Checks that some value is a string matching a given pattern.
+function schema.Pattern(pattern)
+    local userPattern = pattern
+    if not pattern:match("^^") then
+        pattern = "^" .. pattern
+    end
+    if not pattern:match("$$") then
+        pattern = pattern .. "$"
+    end
+    local function CheckPattern(obj, path)
+        local err = schema.String(obj, path)
+        if err then
+            return err
+        end
+        if string.match(obj, pattern) then
+            return nil
+        else
+            return schema.Error("Invalid value: '"..path.."' must match pattern '"..userPattern.."'", path)
+        end
+    end
+    return CheckPattern
+end
+
 -- Checks that some number is an integer.
 function schema.Integer(obj, path)
     local err = schema.Number(obj, path)
