@@ -348,6 +348,18 @@ The following schemata are built into the package (sorted alphabetically):
       -- Type mismatch: '<val>' should be table, is string
       print(schema.CheckSchema(negExample, schema.Table))
 
+* **Test(fn, [msg])**
+
+  Runs an arbitrary test function on the value. This is useful for quickly creating
+  custom validations. Example:
+
+      local negExample = {
+        plugin = "invalid.module"
+      }
+
+      -- Invalid value: '<plugin>': not an existing module
+      print(schema.CheckSchema(negExample, schema.Test(function(v) return pcall(require, v) end, "not an existing module")))
+
 * **Tuple(...)**
 
   Takes schemata and matches against a tuple of those schemata in the order
@@ -389,6 +401,13 @@ that matches just those:
         end
         return nil
     end
+
+Alternatively, you can use `schema.Test`:
+
+    EvenInteger = schema.AllOf(
+                     schema.Integer,
+                     schema.Test(function(obj) return obj % 2 == 0 end, "must be even")
+                  )
 
 There are a few things to note:
 
