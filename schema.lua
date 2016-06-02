@@ -287,6 +287,18 @@ function schema.NonNegativeNumber(obj, path)
     return schema.Error("Invalid value: '"..path.."' must be >= 0", path)
 end
 
+-- Checks that some number is > 0.
+function schema.PositiveNumber(obj, path)
+    local err = schema.Number(obj, path)
+    if err then
+        return err
+    end
+    if obj > 0 then
+        return nil
+    end
+    return schema.Error("Invalid value: '"..path.."' must be > 0", path)
+end
+
 -- Checks that some value is a number from the interval [lower, upper].
 function schema.NumberFrom(lower, upper)
     local function CheckNumberFrom(obj, path)
