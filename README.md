@@ -294,6 +294,22 @@ The following schemata are built into the package (sorted alphabetically):
       -- No suitable alternative: No schema matches '<val>'
       print(schema.CheckSchema(negExample, exampleSchema))
 
+* **Pattern(patt)**
+
+  Checks that the value is a string matching a given Lua pattern.
+  The entire string must match the pattern: if `^` and `$` markers
+  in the beginning and end of string are not present, they are
+  internally added to the pattern.
+  Example:
+
+      local exampleSchema = schema.Pattern("[A-Za-z_][A-Za-z0-9_]*")
+      local posExample = "test"
+      local posExample2 = "_"
+
+      local negExample = "0var"
+      -- Invalid value: '<val>' must match pattern '[A-Za-z_][A-Za-z0-9_]*'
+      print(schema.CheckSchema(negExample, exampleSchema))
+
 * **PositiveNumber**
 
   Matches all positive numbers (i.e, number > 0). Example:
