@@ -547,4 +547,16 @@ function schema.Case(relativePath, ...)
     return CheckCase
 end
 
+function schema.Test(fn, msg)
+    local function CheckTest(obj, path)
+        local pok, ok = pcall(fn, obj)
+        if pok and ok then
+            return nil
+        else
+            return schema.Error("Invalid value: '"..path..(msg and "': "..msg or ""), path)
+        end
+    end
+    return CheckTest
+end
+
 return schema
