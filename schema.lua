@@ -189,6 +189,7 @@ setmetatable(List, {
         return List.new(...)
     end
 })
+schema.List = List
 
 -- Error class. Describes mismatches that occured during the schema-checking.
 local Error = {}
