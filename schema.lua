@@ -425,6 +425,64 @@ function schema.Record(recordschema, additionalValues)
     return CheckRecord
 end
 
+function schema.MixedTable(t_schema, additional_values)
+    local function CheckMixedTable(obj, path)
+        local obj_t = type(obj)
+        if obj_t ~= "table" then
+            local msg = ("Type mismatch: '%s' should be a table, is %s"):format(path, obj_t)
+            return schema.Error(msg, path)
+        end
+
+        local errmsg = nil
+        local function AddError(msg)
+            if errmsg == nil then
+                errmsg = msg
+            else
+                errmsg = errmsg:append(msg)
+            end
+        end
+
+        local checked_keys = {}
+        for k, v in pairs(t_schema) do
+            path:push(k)
+            local err = schema.CheckSchema(obj[k], v, path)
+            if err then
+                AddError(err)
+            end
+            checked_keys[k] = true
+            path:pop()
+        end
+
+        for k, v in pairs(obj) do
+            if not checked_keys[k] then
+                path:push(k)
+                local k_type = type(k)
+                if k_type ~= "string" and k_type ~= "number" then
+                    local msg = ("Invalid key: '%s' must be of type 'string' or 'number'"):format(k_type)
+                    AddError(schema.Error(msg, path))
+                end
+
+                local t_schema_v = t_schema[k]
+                if t_schema_v then
+                    local err = schema.CheckSchema(v, t_schema_v, path)
+                    if err then
+                        AddError(err)
+                    end
+                else
+                    if not additional_values then
+                        local msg = ("Superfluous value: '%s' does not appear in the table schema")
+                                            :format(path)
+                        AddError(schema.Error(msg, path))
+                    end
+                end
+                path:pop()
+            end
+        end
+        return errmsg
+    end
+    return CheckMixedTable
+end
+
 -- Builds a map type schema, i.e. a table with an arbitraty number of
 -- entries where both all keys (and all vaules) fit a common schema.
 function schema.Map(keyschema, valschema)
