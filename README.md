@@ -29,7 +29,7 @@ We read a bunch of tables, each of them looks like this:
         id        = 12, -- id is a number
         usertype  = "admin", -- one of 'admin', 'moderator', 'user'
         nicknames = { "Nick1", "Nick2" }, -- nicknames used by this user
-        rights    = { 4, 1, 7} -- table of fixed length of types
+        rights    = { 4, 1, 7 } -- table of fixed length of types
     }
 
 A schema describing such a table would be
