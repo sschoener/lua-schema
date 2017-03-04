@@ -353,6 +353,78 @@ The following schemata are built into the package (sorted alphabetically):
       -- Superfluous value: '1' does not appear in the record schema
       print(schema.CheckSchema(negExample, exampleSchema))
 
+* **MixedTable(tableSchema, additionalValues = false)**
+
+  Takes a table schema. The table schema consists of keys (strings or numbers only)
+  and schemata for the corresponding values. Additional values treated in the same
+  way as in a ```Record```.
+  Example:
+
+      local exampleSchema = schema.MixedTable {
+        [1] = schema.Number,
+        [2] = schema.Number,
+        count = schema.Number,
+      }
+
+      local matchingExample = {
+        [1] = 4,
+        [2] = 5,
+        count = 2,
+      }
+
+      local failExample = {
+        [1] = 30,
+        count = true,
+        data = { 1, 2, 3 }
+      }
+
+      -- Type mismatch: 'count' should be number, is boolean
+      -- Type mismatch: '2' should be number, is nil
+      -- Superfluous value: 'data' does not appear in the table schema
+      print(schema.CheckSchema(failExample, exampleSchema))
+
+  Also can be used to check dynamic schemata via metatable.
+  Example:
+
+      local exampleSchema_mt = {
+        __index = function(_, key)
+          -- we want to handle only integer keys
+          if type(key) ~= 'number' or math.floor(key) ~= key then
+            -- unknown field, will report error
+            return
+          end
+
+          -- can be stored in upvalue to avoid creating new schemata
+          -- on every metamethod call
+          return schema.MixedTable {
+            args = schema.Record {
+              min = schema.Optional(schema.Number),
+              max = schema.Optional(schema.Number),
+              assume = schema.Optional(schema.Collection(schema.String)),
+            },
+            [1] = schema.Function,
+          }
+        end
+      }
+
+      local exampleSchema = schema.MixedTable(setmetatable({
+        name = schema.String,
+      }, exampleSchema_mt))
+
+      local failExample = {
+        name = 'abc', -- matched via 'name' schemata
+        -- following matched via schemata returned from __index metamethod of exampleSchema_mt
+        { args = { min = 1, max = 1, assume = { 'number' } }, function() print('number') end },
+        { args = { min = 1, assume = { 'string' } }, function() print('string') end },
+        { args = { -- empty table ok: all field in args Record are optional
+                 }, function() end },
+        -- only integer args expected in __index metamethod
+        [3.5] = { args = { }, function() end },
+      }
+
+      -- Superfluous value: '3.5' does not appear in the table schema
+      print(schema.CheckSchema(failExample, exampleSchema))
+
 * **String**
 
   Matches strings. Example:
