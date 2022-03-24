@@ -231,7 +231,7 @@ schema.Error = Error
 -- Schema Building Blocks
 -- A schema is a function taking the object to be checked and the path to the
 -- current value in the environment.
--- It returns either 'true' if the schema accepted the object or an Error 
+-- It returns either 'true' if the schema accepted the object or an Error
 -- object which describes why it was rejected.
 -- The schemata below are just some basic building blocks. Expand them to your
 -- liking.
@@ -429,7 +429,7 @@ function schema.MixedTable(t_schema, additional_values)
     local function CheckMixedTable(obj, path)
         local obj_t = type(obj)
         if obj_t ~= "table" then
-            local msg = ("Type mismatch: '%s' should be a table, is %s"):format(path, obj_t)
+            local msg = ("Type mismatch: '%s' should be a table, is %s"):format(tostring(path), obj_t)
             return schema.Error(msg, path)
         end
 
@@ -471,7 +471,7 @@ function schema.MixedTable(t_schema, additional_values)
                 else
                     if not additional_values then
                         local msg = ("Superfluous value: '%s' does not appear in the table schema")
-                                            :format(path)
+                                            :format(tostring(path))
                         AddError(schema.Error(msg, path))
                     end
                 end
