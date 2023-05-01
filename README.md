@@ -117,7 +117,7 @@ The following schemata are built into the package (sorted alphabetically):
       local posExample = true
       local negExample = { true }
       -- Type mismatch: '<val>' should be boolean, is table
-      print(chema.CheckSchema(negExample, schema.Boolean))
+      print(schema.CheckSchema(negExample, schema.Boolean))
 
 * **Case(path, ...)**
 
